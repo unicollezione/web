@@ -4,7 +4,7 @@ import './App.css';
 import Author from './Author';
 import Book from './Book';
 import Genre from './Genre';
-import { GoogleSignInComponent } from './GoogleSignInComponent';
+import GoogleSignInComponent from './GoogleSignInComponent';
 import MenuAction from './MenuAction';
 import MenuActionListener from './MenuActionListener';
 import NavBar from './NavBar';

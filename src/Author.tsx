@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import Alert from './Alert';
-import AlertType from './AlertType';
+import Alert from './components/Alert';
+import AlertType from './types/AlertType';
 
 interface AuthorProps {
     googleAccessToken: string
@@ -124,5 +124,4 @@ class Author extends Component<AuthorProps, AuthorState> {
 
 }
 
-export default Author;
-
+export default Author ;
