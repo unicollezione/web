@@ -1,57 +1,52 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
+import React, { useState } from 'react';
+import { GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
 import './App.css';
+import Author from './Author';
+import Book from './Book';
+import Genre from './Genre';
+import { GoogleSignInComponent } from './GoogleSignInComponent';
+import MenuAction from './MenuAction';
+import MenuActionListener from './MenuActionListener';
+import NavBar from './NavBar';
 
 function App() {
+
+  const [selectedMenuItem, setSelectedMenuItem] = useState<MenuAction>();
+  const [googleAccessToken, setGoogleAccessToken] = useState<string>('');
+
+  const menuSelectionChanged: MenuActionListener = function (action: MenuAction): void {
+    setSelectedMenuItem(action);
+    if (action === MenuAction.LOGOUT) {
+      setGoogleAccessToken('');
+    }
+  };
+
+  let componentToDisplay;
+
+  if (!googleAccessToken) {
+    componentToDisplay = <GoogleSignInComponent loginSuccess={(response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
+      debugger
+      if ('tokenId' in response) {
+        setGoogleAccessToken(response.tokenId);
+      }
+    }} />
+  } else if (selectedMenuItem === MenuAction.ADD_NEW_GENRE) {
+    componentToDisplay = <Genre googleAccessToken={googleAccessToken} />;
+  } else if (selectedMenuItem === MenuAction.ADD_NEW_AUTHOR) {
+    componentToDisplay = <Author googleAccessToken={googleAccessToken} />;
+  } else if (selectedMenuItem === MenuAction.ADD_NEW_BOOK) {
+    componentToDisplay = <Book googleAccessToken={googleAccessToken} />;
+  } else {
+    componentToDisplay = <h1><span className="badge badge-pill badge-danger align-items-centre">Please select an item to display</span></h1>;
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
-    </div>
+    <>
+      {googleAccessToken &&
+        <NavBar menuActionListener={menuSelectionChanged} />
+      }
+      {componentToDisplay}
+    </>
   );
 }
 
